@@ -73,6 +73,8 @@ module powerbi.visuals {
             },
         };
 
+        private static VisualClassName = 'labeledHistogram';
+        private static ViewBox = '0 0 1240 840';
         private element: JQuery;
         private svg: D3.Selection;
         private chart: D3.Selection;
@@ -97,17 +99,21 @@ module powerbi.visuals {
 
         /* One time setup*/
         public init(options: VisualInitOptions): void {
+
             this.element = options.element;
+
             this.svg = d3.select(this.element.get(0))
                 .append('svg')
-                .classed('labeledHistogram', true)
-                .attr('viewBox', '0 0 1200 800');
+                .classed(LabeledHistogram.VisualClassName, true)
+                .attr('viewBox', LabeledHistogram.ViewBox);
+
             this.chart = this.svg.append('g').attr('transform', SVGUtil.translate(20, 20));
         }
 
         /* Called for data, size, formatting changes*/
         public update(options: VisualUpdateOptions) {
-            if (!options.dataViews || !options.dataViews[0]) return; // or clear the view, display an error, etc.
+
+            if (!options.dataViews || !options.dataViews[0]) return;
           
             var dataView = this.dataView = options.dataViews[0];
             var dataPoints = LabeledHistogram.converter(dataView);
@@ -123,9 +129,9 @@ module powerbi.visuals {
 
             var histogram = d3.layout.histogram().value((d) => d.value)(dataPoints);
 
-            var itemWidth = 150,
+            var itemWidth = Math.min(150, Math.floor(1200 / histogram.length)),
                 chartHeight = 800,
-                itemHeight = Math.min(20, chartHeight / histogram.reduce((a, b) => { return Math.max(a, b.length); }, 0)),
+                itemHeight = Math.min(20, Math.floor(chartHeight / histogram.reduce((a, b) => Math.max(a, b.length), 0))),
                 columnPadding = 10,
                 marginBottom = 40;
 
@@ -148,8 +154,7 @@ module powerbi.visuals {
                 .text((d) => d.label);
 
             columns.each(function (column, i) {
-
-                var height = this.getBBox().height;
+                var height = column.length * itemHeight;
                 d3.select(this)
                     .attr('transform', (d) => SVGUtil.translate((itemWidth * i), (chartHeight - height - marginBottom)))
                     .insert('rect', 'text')
