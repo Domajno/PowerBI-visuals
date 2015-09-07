@@ -37,6 +37,7 @@
 /// <reference path="sampleDataViews/SimpleGaugeData.ts"/>
 /// <reference path="sampleDataViews/SimpleMatrixData.ts"/>
 /// <reference path="sampleDataViews/SimpleTableData.ts"/>
+/// <reference path="sampleDataViews/SimpleHistogramTableData.ts"/>
 /// <reference path="sampleDataViews/TeamScoreData.ts"/>
 
 /// <reference path="sampleData.ts"/>

@@ -293,4 +293,10 @@ module powerbi.visuals.plugins {
         capabilities: samples.AsterPlot.capabilities,
         create: () => new samples.AsterPlot()
     };
+
+    export var labeledHistogram: IVisualPlugin = {
+        name: 'labeledHistogram',
+        capabilities: LabeledHistogram.capabilities,
+        create: () => new LabeledHistogram()
+    };
 }
