@@ -32,6 +32,7 @@ module powerbi.visuals {
     export interface HistogramDatapoint {
         label: string;
         value: number;
+        toolTipInfo: TooltipDataItem[];
     };
 
     export class LabeledHistogram implements IVisual {
@@ -83,7 +84,18 @@ module powerbi.visuals {
 
         // Convert a DataView into a view model
         public static converter(dataView: DataView): HistogramDatapoint[]{
-            var data = (dataView.table && dataView.table.rows && dataView.table.rows.map) ? dataView.table.rows.map(function (row) { return {label: row[0], value: row[1]}; }) : [];
+            var data = (dataView.table && dataView.table.rows && dataView.table.rows.map) ?
+                dataView.table.rows.map(function (row) {
+                    return {
+                        label: row[0],
+                        value: row[1],
+                        toolTipInfo: [{
+                            displayName: '',
+                            value: row[0] + ' ' + row[1]
+                        }]
+                    };
+                })
+                : [];
             return data;
         }
 
@@ -150,7 +162,8 @@ module powerbi.visuals {
                     .attr('y', -itemHeight)
                     .style('fill', '#E0FDC5');
             });
-            
+
+            TooltipManager.addTooltip(columns.selectAll('text'), (tooltipEvent: TooltipEvent) => tooltipEvent.data.toolTipInfo);
         }
 
         /*About to remove your visual, do clean up here */ 
