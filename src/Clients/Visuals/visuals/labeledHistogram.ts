@@ -87,7 +87,7 @@ module powerbi.visuals {
             var data = (dataView.table && dataView.table.rows && dataView.table.rows.map) ?
                 dataView.table.rows.map(function (row) {
                     return {
-                        label: row[0],
+                        label: row[0].toString().substring(0, 20),
                         value: row[1],
                         toolTipInfo: [{
                             displayName: '',
