@@ -105,7 +105,7 @@ module powerbi.visuals {
             this.selectionManager = new SelectionManager({ hostServices: options.host });
             this.svg = d3.select(this.element.get(0))
                 .append('svg')
-                .classed('labeled-histogram', true)
+                .classed('labeledHistogram', true)
                 .attr('viewBox', '0 0 1200 800');
             this.chart = this.svg.append('g').attr('transform', 'translate(20, 20)');
         }
@@ -159,8 +159,7 @@ module powerbi.visuals {
                     .attr('width', itemWidth - 4)
                     .attr('height', height + itemHeight/2)
                     .attr('x', 2)
-                    .attr('y', -itemHeight)
-                    .style('fill', '#E0FDC5');
+                    .attr('y', -itemHeight);
             });
 
             TooltipManager.addTooltip(columns.selectAll('text'), (tooltipEvent: TooltipEvent) => tooltipEvent.data.toolTipInfo);
@@ -172,7 +171,7 @@ module powerbi.visuals {
                 axisScale = d3.scale.linear().domain([min, max]).range([0, histogram.length * itemWidth]),
                 xAxis = d3.svg.axis().scale(axisScale).tickValues(ticks),
                 xAxisGroup = this.chart.append("g").call(xAxis);
-            xAxisGroup.attr('transform', 'translate(0, ' + (chartHeight - 40) + ')');
+            xAxisGroup.attr('transform', 'translate(0, ' + (chartHeight - 45) + ')');
         }
 
         /*About to remove your visual, do clean up here */ 
