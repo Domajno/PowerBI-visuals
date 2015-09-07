@@ -82,7 +82,7 @@ module powerbi.visuals {
         private chart: D3.Selection;
 
         // Convert a DataView into a view model
-        public static converter(dataView: DataView): HistogramDatapoint[]{
+        public static converter(dataView: DataView): HistogramDatapoint[] {
             var data = (dataView.table && dataView.table.rows && dataView.table.rows.map) ?
                 dataView.table.rows.map((row) => {
                     return {
@@ -108,7 +108,7 @@ module powerbi.visuals {
             this.chart = this.svg.append('g').attr('transform', 'translate(20, 20)');
         }
 
-        /* Called for data, size, formatting changes*/ 
+        /* Called for data, size, formatting changes*/
         public update(options: VisualUpdateOptions) {
             if (!options.dataViews || !options.dataViews[0]) return; // or clear the view, display an error, etc.
           
@@ -126,7 +126,7 @@ module powerbi.visuals {
 
             var itemWidth = 150,
                 chartHeight = 800,
-                itemHeight = Math.min(20, chartHeight/histogram.reduce((a, b) => { return Math.max(a, b.length); }, 0)),
+                itemHeight = Math.min(20, chartHeight / histogram.reduce((a, b) => { return Math.max(a, b.length); }, 0)),
                 columnPadding = 10,
                 marginBottom = 40;
 
@@ -148,14 +148,14 @@ module powerbi.visuals {
                 .style('font-family', 'sans-serif')
                 .text((d) => d.label);
 
-            columns.each(function(column, i) {
+            columns.each(function (column, i) {
 
                 var height = this.getBBox().height;
                 d3.select(this)
                     .attr('transform', (d) => { return 'translate(' + (itemWidth * i) + ', ' + (chartHeight - height - marginBottom) + ')'; })
                     .insert('rect', 'text')
                     .attr('width', itemWidth - 4)
-                    .attr('height', height + itemHeight/2)
+                    .attr('height', height + itemHeight / 2)
                     .attr('x', 2)
                     .attr('y', -itemHeight);
             });
@@ -173,7 +173,7 @@ module powerbi.visuals {
             xAxisGroup.attr('transform', 'translate(0, ' + (chartHeight - 45) + ')');
         }
 
-        /*About to remove your visual, do clean up here */ 
+        /*About to remove your visual, do clean up here */
         public destroy() {
             this.svg.remove();
         }
