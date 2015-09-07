@@ -102,7 +102,7 @@ module powerbi.visuals {
                 .append('svg')
                 .classed('labeledHistogram', true)
                 .attr('viewBox', '0 0 1200 800');
-            this.chart = this.svg.append('g').attr('transform', 'translate(20, 20)');
+            this.chart = this.svg.append('g').attr('transform', SVGUtil.translate(20, 20));
         }
 
         /* Called for data, size, formatting changes*/
@@ -133,7 +133,7 @@ module powerbi.visuals {
                 .data(histogram)
                 .enter()
                 .append('g')
-                .attr('transform', (d, i) => { return 'translate(' + (itemWidth * i) + ')'; });
+                .attr('transform', (d, i) => SVGUtil.translate(itemWidth * i, 0));
 
             columns.selectAll('text')
                 .data((d) => d)
@@ -151,7 +151,7 @@ module powerbi.visuals {
 
                 var height = this.getBBox().height;
                 d3.select(this)
-                    .attr('transform', (d) => { return 'translate(' + (itemWidth * i) + ', ' + (chartHeight - height - marginBottom) + ')'; })
+                    .attr('transform', (d) => SVGUtil.translate((itemWidth * i), (chartHeight - height - marginBottom)))
                     .insert('rect', 'text')
                     .attr('width', itemWidth - 4)
                     .attr('height', height + itemHeight / 2)
@@ -170,7 +170,7 @@ module powerbi.visuals {
                 axisScale = d3.scale.linear().domain([min, max]).range([0, histogram.length * itemWidth]),
                 xAxis = d3.svg.axis().scale(axisScale).tickValues(ticks),
                 xAxisGroup = this.chart.append("g").call(xAxis);
-            xAxisGroup.attr('transform', 'translate(0, ' + (chartHeight - 45) + ')');
+            xAxisGroup.attr('transform', SVGUtil.translate(0, (chartHeight - 45)));
         }
 
         /*About to remove your visual, do clean up here */
