@@ -66,11 +66,7 @@ module powerbi.visuals {
                     properties: {
                         fill: {
                             type: { fill: { solid: { color: true } } },
-                            displayName: 'Fill'
-                        },
-                        size: {
-                            type: { numeric: true },
-                            displayName: 'Size'
+                            displayName: 'Columns Fill'
                         }
                     },
                 }
@@ -80,6 +76,7 @@ module powerbi.visuals {
         private element: JQuery;
         private svg: D3.Selection;
         private chart: D3.Selection;
+        private dataView: DataView;
 
         // Convert a DataView into a view model
         public static converter(dataView: DataView): HistogramDatapoint[] {
@@ -112,7 +109,9 @@ module powerbi.visuals {
         public update(options: VisualUpdateOptions) {
             if (!options.dataViews || !options.dataViews[0]) return; // or clear the view, display an error, etc.
           
-            var dataPoints = LabeledHistogram.converter(options.dataViews[0]);
+            var dataView = this.dataView = options.dataViews[0];
+            var dataPoints = LabeledHistogram.converter(dataView);
+            var fillColor = LabeledHistogram.getFill(dataView).solid.color;
 
             this.chart.selectAll('*').remove();
 
@@ -157,7 +156,8 @@ module powerbi.visuals {
                     .attr('width', itemWidth - 4)
                     .attr('height', height + itemHeight / 2)
                     .attr('x', 2)
-                    .attr('y', -itemHeight);
+                    .attr('y', -itemHeight)
+                    .style('fill', fillColor);
             });
 
             // Add tooltip
@@ -176,6 +176,41 @@ module powerbi.visuals {
         /*About to remove your visual, do clean up here */
         public destroy() {
             this.svg.remove();
+        }
+
+        private static getFill(dataView: DataView): Fill {
+            if (dataView) {
+                var objects = dataView.metadata.objects;
+                if (objects) {
+                    var general = objects['general'];
+                    if (general) {
+                        var fill = <Fill>general['fill'];
+                        if (fill)
+                            return fill;
+                    }
+                }
+            }
+            return { solid: { color: '#C9FFD8' } };
+        }
+
+        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
+            var instances: VisualObjectInstance[] = [];
+            var dataView = this.dataView;
+            switch (options.objectName) {
+                case 'general':
+                    var general: VisualObjectInstance = {
+                        objectName: 'general',
+                        displayName: 'General',
+                        selector: null,
+                        properties: {
+                            fill: LabeledHistogram.getFill(dataView)
+                        }
+                    };
+                    instances.push(general);
+                    break;
+            }
+
+            return instances;
         }
     }
 }
