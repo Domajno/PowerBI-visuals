@@ -40,21 +40,23 @@ module powerbi.visuals {
 		  * Fields, Formatting options, data reduction & QnA hints
 		  */
         public static capabilities: VisualCapabilities = {
-            dataRoles: [{
-                name: 'Values',
-                kind: VisualDataRoleKind.Measure
+            dataRoles: [
+                {
+                    name: 'Category',
+                    kind: powerbi.VisualDataRoleKind.Grouping,
                 },
                 {
-                    name: 'Labels',
-                    kind: VisualDataRoleKind.Grouping
-                }],
+                    name: 'Measure',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                },
+            ],
             dataViewMappings: [{
-                table: {
-                    rows: {
-                        for: { in: 'Values' },
-                        dataReductionAlgorithm: { window: { count: 100 } }
-                    },
-                    rowCount: { preferred: { min: 1 } }
+                categories: {
+                    for: { in: 'Category' },
+                    dataReductionAlgorithm: { top: {} }
+                },
+                values: {
+                    select: [{ bind: { to: 'Y' } }]
                 },
             }]
         };
@@ -76,6 +78,7 @@ module powerbi.visuals {
             this.selectionManager = new SelectionManager({ hostServices: options.host });
             this.svg = d3.select(this.element.get(0))
                 .append('svg')
+                .classed('labeled-histogram', true)
                 .attr('viewBox', '0 0 1200 800');
             this.chart = this.svg.append('g').attr('transform', 'translate(20, 20)');
         }
