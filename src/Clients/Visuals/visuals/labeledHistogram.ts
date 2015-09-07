@@ -114,18 +114,21 @@ module powerbi.visuals {
         public update(options: VisualUpdateOptions) {
 
             if (!options.dataViews || !options.dataViews[0]) return;
+
+            this.svg.attr({
+                    'height': options.viewport.height,
+                    'width': options.viewport.width
+                });
+
+            // If data haven't changed return. NOT SURE IF THIS IS BEST WAY TO CHECK THAT
+            if (JSON.stringify(this.dataView) === JSON.stringify(options.dataViews[0])) return;
           
             var dataView = this.dataView = options.dataViews[0];
             var dataPoints = LabeledHistogram.converter(dataView);
             var fillColor = LabeledHistogram.getFill(dataView).solid.color;
 
+            // If would be too complicated to handle data change so simply redraw the whole visual
             this.chart.selectAll('*').remove();
-
-            this.svg
-                .attr({
-                    'height': options.viewport.height,
-                    'width': options.viewport.width
-                });
 
             var histogram = d3.layout.histogram().value((d) => d.value)(dataPoints);
 
