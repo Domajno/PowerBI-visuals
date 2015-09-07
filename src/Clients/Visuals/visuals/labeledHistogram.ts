@@ -58,7 +58,22 @@ module powerbi.visuals {
                 values: {
                     select: [{ bind: { to: 'Y' } }]
                 },
-            }]
+            }],
+            objects: {
+                general: {
+                    displayName: data.createDisplayNameGetter('Visual_General'),
+                    properties: {
+                        fill: {
+                            type: { fill: { solid: { color: true } } },
+                            displayName: 'Fill'
+                        },
+                        size: {
+                            type: { numeric: true },
+                            displayName: 'Size'
+                        }
+                    },
+                }
+            },
         };
 
         private element: JQuery;
