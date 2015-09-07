@@ -164,6 +164,15 @@ module powerbi.visuals {
             });
 
             TooltipManager.addTooltip(columns.selectAll('text'), (tooltipEvent: TooltipEvent) => tooltipEvent.data.toolTipInfo);
+
+            // Draw x-axis
+            var min = histogram[0].x,
+                max = histogram[histogram.length - 1].x + histogram[histogram.length - 1].dx,
+                ticks = histogram.map(function (bin) { return bin.x; }).concat(max),
+                axisScale = d3.scale.linear().domain([min, max]).range([0, histogram.length * itemWidth]),
+                xAxis = d3.svg.axis().scale(axisScale).tickValues(ticks),
+                xAxisGroup = this.chart.append("g").call(xAxis);
+            xAxisGroup.attr('transform', 'translate(0, ' + (chartHeight - 40) + ')');
         }
 
         /*About to remove your visual, do clean up here */ 
