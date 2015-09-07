@@ -78,14 +78,13 @@ module powerbi.visuals {
         };
 
         private element: JQuery;
-        private selectionManager: SelectionManager;
         private svg: D3.Selection;
         private chart: D3.Selection;
 
         // Convert a DataView into a view model
         public static converter(dataView: DataView): HistogramDatapoint[]{
             var data = (dataView.table && dataView.table.rows && dataView.table.rows.map) ?
-                dataView.table.rows.map(function (row) {
+                dataView.table.rows.map((row) => {
                     return {
                         label: row[0].toString().substring(0, 20),
                         value: row[1],
@@ -102,7 +101,6 @@ module powerbi.visuals {
         /* One time setup*/
         public init(options: VisualInitOptions): void {
             this.element = options.element;
-            this.selectionManager = new SelectionManager({ hostServices: options.host });
             this.svg = d3.select(this.element.get(0))
                 .append('svg')
                 .classed('labeledHistogram', true)
@@ -124,11 +122,11 @@ module powerbi.visuals {
                     'width': options.viewport.width
                 });
 
-            var histogram = d3.layout.histogram().value(function (d) { return d.value; })(dataPoints);
+            var histogram = d3.layout.histogram().value((d) => d.value)(dataPoints);
 
             var itemWidth = 150,
                 chartHeight = 800,
-                itemHeight = Math.min(20, chartHeight/histogram.reduce(function (a, b) { return Math.max(a, b.length); }, 0)),
+                itemHeight = Math.min(20, chartHeight/histogram.reduce((a, b) => { return Math.max(a, b.length); }, 0)),
                 columnPadding = 10,
                 marginBottom = 40;
 
@@ -136,25 +134,25 @@ module powerbi.visuals {
                 .data(histogram)
                 .enter()
                 .append('g')
-                .attr('transform', function (d, i) { return 'translate(' + (itemWidth * i) + ')'; });
+                .attr('transform', (d, i) => { return 'translate(' + (itemWidth * i) + ')'; });
 
             columns.selectAll('text')
-                .data(function (d) { return d; })
+                .data((d) => d)
                 .enter()
                 .append('text')
-                .attr('y', function (d, i) { return itemHeight * i; })
+                .attr('y', (d, i) => { return itemHeight * i; })
                 .attr('textLength', itemWidth - columnPadding)
                 .attr('lengthAdjust', 'spacingAndGlyphs')
                 .attr('x', columnPadding / 2)
                 .style('text-transform', 'uppercase')
                 .style('font-family', 'sans-serif')
-                .text(function (d) { return d.label; });
+                .text((d) => d.label);
 
-            columns.each(function (column, i) {
+            columns.each(function(column, i) {
 
                 var height = this.getBBox().height;
                 d3.select(this)
-                    .attr('transform', function (d) { return 'translate(' + (itemWidth * i) + ', ' + (chartHeight - height - marginBottom) + ')'; })
+                    .attr('transform', (d) => { return 'translate(' + (itemWidth * i) + ', ' + (chartHeight - height - marginBottom) + ')'; })
                     .insert('rect', 'text')
                     .attr('width', itemWidth - 4)
                     .attr('height', height + itemHeight/2)
@@ -162,12 +160,13 @@ module powerbi.visuals {
                     .attr('y', -itemHeight);
             });
 
+            // Add tooltip
             TooltipManager.addTooltip(columns.selectAll('text'), (tooltipEvent: TooltipEvent) => tooltipEvent.data.toolTipInfo);
 
             // Draw x-axis
             var min = histogram.length > 0 ? histogram[0].x : 0,
                 max = histogram.length > 0 ? (histogram[histogram.length - 1].x + histogram[histogram.length - 1].dx) : 0,
-                ticks = histogram.map(function (bin) { return bin.x; }).concat(max),
+                ticks = histogram.map((bin) => bin.x).concat(max),
                 axisScale = d3.scale.linear().domain([min, max]).range([0, histogram.length * itemWidth]),
                 xAxis = d3.svg.axis().scale(axisScale).tickValues(ticks),
                 xAxisGroup = this.chart.append("g").call(xAxis);
