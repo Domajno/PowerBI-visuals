@@ -126,9 +126,9 @@ module powerbi.visuals {
 
             var histogram = d3.layout.histogram().value(function (d) { return d.value; })(dataPoints);
 
-            var itemHeight = 20,
-                itemWidth = 150,
+            var itemWidth = 150,
                 chartHeight = 800,
+                itemHeight = Math.min(20, chartHeight/histogram.reduce(function (a, b) { return Math.max(a, b.length); }, 0)),
                 columnPadding = 10,
                 marginBottom = 40;
 
@@ -165,8 +165,8 @@ module powerbi.visuals {
             TooltipManager.addTooltip(columns.selectAll('text'), (tooltipEvent: TooltipEvent) => tooltipEvent.data.toolTipInfo);
 
             // Draw x-axis
-            var min = histogram[0].x,
-                max = histogram[histogram.length - 1].x + histogram[histogram.length - 1].dx,
+            var min = histogram.length > 0 ? histogram[0].x : 0,
+                max = histogram.length > 0 ? (histogram[histogram.length - 1].x + histogram[histogram.length - 1].dx) : 0,
                 ticks = histogram.map(function (bin) { return bin.x; }).concat(max),
                 axisScale = d3.scale.linear().domain([min, max]).range([0, histogram.length * itemWidth]),
                 xAxis = d3.svg.axis().scale(axisScale).tickValues(ticks),
